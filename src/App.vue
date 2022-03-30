@@ -1,78 +1,81 @@
 <script>
-import HeaderComp from "./components/header.vue"
-import Tasks from "./components/Tasks.vue"
-import addTaskForm from "./components/addTask.vue"
-export default{
-  name: 'App',
+import HeaderComp from "./components/header.vue";
+import Tasks from "./components/Tasks.vue";
+import addTaskForm from "./components/addTask.vue";
+export default {
+  name: "App",
 
-  data(){
-    return{
+  data() {
+    return {
       tasks: [],
       showAddTask: false,
-    }
+    };
   },
 
-  components:{
+  components: {
     HeaderComp,
     Tasks,
-    addTaskForm 
+    addTaskForm,
   },
-  methods :{
-    taggleTaskForm(){
-      this.showAddTask = !this.showAddTask
+  methods: {
+    taggleTaskForm() {
+      this.showAddTask = !this.showAddTask;
     },
-    addTask(task){
-      this.tasks = [...this.tasks, task]
+    addTask(task) {
+      this.tasks = [...this.tasks, task];
     },
-    deleteTask(id){
-      if(confirm("Are you sure to delete?")){
-        this.tasks = this.tasks.filter((task) => task.id !==id)
+    deleteTask(id) {
+      if (confirm("Are you sure to delete?")) {
+        this.tasks = this.tasks.filter((task) => task.id !== id);
       }
-      
     },
-    taggleRemainder(id){
+    taggleRemainder(id) {
       console.log(id);
-      this.tasks= this.tasks.map((task) => task.id === id ? {...task, reminder:!task.reminder} : task )
+      this.tasks = this.tasks.map((task) =>
+        task.id === id ? { ...task, reminder: !task.reminder } : task
+      );
     },
+  },
+
+  watch: {
+    tasks: {
+      handler() {
+        localStorage.setItem("tasks", JSON.stringify(this.tasks));
+      },
+      deep: true,
+    },
+  },
+  mounted() {
+    if (localStorage.getItem("tasks")) {
+      this.tasks = JSON.parse(localStorage.getItem("tasks"));
+    }
   },
   // emits: ['task-delete'],
-  created(){
-    this.tasks = [
-      {
-        id: 1,
-        text:'Doctors Appointment',
-        day: 'March 1st at 2:30PM',
-        reminder: true,
-      },
-      {
-        id: 2,
-        text:'Boss Appointment',
-        day: 'March 2st at 2:30PM',
-        reminder: false, 
-      },
-      {
-        id: 3,
-        text:'Client Appointment',
-        day: 'March 3st at 2:30PM',
-        reminder: true,
-      },
-    ]
-  }
-  
-
-}
-
+  created() {
+    if (localStorage.getItem("tasks")) {
+      this.tasks = JSON.parse(localStorage.getItem("tasks"));
+    }
+  },
+};
 </script>
 
 <template>
-<div class="container">
- <HeaderComp :showAddTask='showAddTask' @taggle-add-task='taggleTaskForm' titleTag="Task Tracker" />
- <div v-show='showAddTask'>
-   <addTaskForm @add-task='addTask' />
- </div>
- 
- <Tasks @taggle-reminder="taggleRemainder" @task-delete="deleteTask" :tasks="tasks" />
-</div>
+  <div class="container">
+    <HeaderComp
+      :showAddTask="showAddTask"
+      @taggle-add-task="taggleTaskForm"
+      titleTag="Task Tracker"
+    />
+    <div v-show="showAddTask">
+      <addTaskForm @add-task="addTask" />
+    </div>
+
+    <Tasks
+      @taggle-reminder="taggleRemainder"
+      @task-delete="deleteTask"
+      :tasks="tasks"
+    />
+  </div>
 </template>
 
 <style>
@@ -84,7 +87,7 @@ export default{
   padding: 0;
 }
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 .container {
   max-width: 400px;
@@ -129,8 +132,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-
-
 h1,
 h3 {
   margin-bottom: 1rem;
@@ -162,7 +163,7 @@ button {
   color: white;
   font-size: 18px;
   border: 0;
-  padding: .3rem .5rem;
+  padding: 0.3rem 0.5rem;
 }
 
 button:focus {
@@ -172,6 +173,4 @@ button:focus {
 button:hover {
   transform: scale(0.98);
 }
-
-
 </style>
